@@ -9,8 +9,8 @@ from ethpm_types import BaseModel
 @pytest.fixture
 def MyModel():
     class _MyModel(BaseModel):
-        name: str
-        input_types: dict[str, Any]
+        name: str  # type: ignore
+        input_types: dict[str, Any]  # type: ignore
 
     return _MyModel
 

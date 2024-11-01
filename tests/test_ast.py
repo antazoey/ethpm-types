@@ -484,4 +484,5 @@ def test_ast_get_node_no_length(length):
     node = ASTNode.model_validate(VYPER_AST_JSON)
     idx = SourceMapItem(start=111, length=length, contract_id=None, jump_code="-")
     actual = node.get_node(idx)
+    assert actual is not None
     assert actual.ast_type == "Int"
