@@ -1,6 +1,5 @@
 from collections.abc import Iterator
 from enum import Enum
-from typing import Optional, Union
 
 from pydantic import model_validator
 
@@ -18,7 +17,7 @@ class ASTClassification(Enum):
 
 
 class ASTNode(BaseModel):
-    name: Optional[str] = None
+    name: str | None = None
     """
     The node's name if it has one, such as a function name.
     """
@@ -33,7 +32,7 @@ class ASTNode(BaseModel):
     A generic classification of what type of AST this is.
     """
 
-    doc_str: Optional[Union[str, "ASTNode"]] = None
+    doc_str: "str | ASTNode | None" = None
     """
     Documentation for the node.
     """
@@ -118,7 +117,7 @@ class ASTNode(BaseModel):
         return children
 
     @property
-    def line_numbers(self) -> "SourceLocation":
+    def line_numbers(self) -> SourceLocation:
         """
         The values needed for constructing the line numbers for this node
         in the form ``[lineno, col_offset, end_lineno, end_col_offset]``.
@@ -153,7 +152,7 @@ class ASTNode(BaseModel):
         for node in self.children:
             yield from node.iter_nodes()
 
-    def get_node(self, src: SourceMapItem) -> Optional["ASTNode"]:
+    def get_node(self, src: SourceMapItem) -> "ASTNode | None":
         """
         Get a node by source.
 
@@ -193,7 +192,7 @@ class ASTNode(BaseModel):
                 "`(lineno, col_offset, end_lineno, end_coloffset)`"
             )
 
-        if all(x == y for x, y in zip(self.line_numbers, line_numbers)):
+        if all(x == y for x, y in zip(self.line_numbers, line_numbers, strict=False)):
             nodes.append(self)
 
         for child in self.children:
@@ -202,7 +201,7 @@ class ASTNode(BaseModel):
 
         return nodes
 
-    def get_defining_function(self, line_numbers: "SourceLocation") -> Optional["ASTNode"]:
+    def get_defining_function(self, line_numbers: "SourceLocation") -> "ASTNode | None":
         """
         Get the function that defines the given line numbers.
 
